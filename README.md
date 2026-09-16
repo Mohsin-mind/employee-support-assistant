@@ -8,39 +8,27 @@ A learning project that builds an AI employee assistant from scratch and progres
 
 ### Prerequisites
 - **PostgreSQL**: Running on `localhost:5432` with database `employee_support_assistant` and user credentials configured in `backend/.env`.
-- **Node.js**: v20+
+- **Node.js**: v20+ & **pnpm**: v9+
 - **Python**: 3.8+
 
 ---
 
-### Quick Commands (From Repository Root)
+### 1. Start the Backend Server (FastAPI)
 
-| Task | Using `npm` | Using `make` |
-| :--- | :--- | :--- |
-| **Run Backend** (port 3001) | `npm run dev:backend` | `make backend` |
-| **Run Frontend** (port 3000) | `npm run dev:frontend` | `make frontend` |
-| **Run Both Concurrently** | `npm run dev` | `make dev` |
-| **Run Backend Tests** | `npm run test:backend` | `make test` |
-| **Build Frontend** | `npm run build:frontend` | `npm --prefix frontend run build` |
+The backend runs on **port 3001** with hot reloading enabled:
 
----
+```bash
+# Navigate to backend directory
+cd backend
 
-### Step-by-Step Manual Start
+# Option A (Recommended): Standard Python runner
+source .venv/bin/activate        # On Windows: . venv\Scripts\activate
+python app.py
 
-#### 1. Start the Backend Server (FastAPI)
-
-The backend runs on **port 3001** with hot reloading:
-
-- **From repository root**:
-  ```bash
-  ./backend/.venv/bin/python backend/run.py
-  ```
-- **Or from inside the `backend/` directory**:
-  ```bash
-  cd backend
-  .venv/bin/python run.py
-  # or activate venv: source .venv/bin/activate && python run.py
-  ```
+# Option B: Direct uvicorn
+source .venv/bin/activate
+uvicorn backend.app.main:app --host 0.0.0.0 --port 3001 --reload
+```
 
 - **API Base URL**: `http://localhost:3001`
 - **Health Check Endpoint**: [http://localhost:3001/api/v1/health](http://localhost:3001/api/v1/health)
@@ -48,34 +36,29 @@ The backend runs on **port 3001** with hot reloading:
 
 ---
 
-#### 2. Start the Frontend Server (Vite + React + Tailwind v4)
+### 2. Start the Frontend Server (Vite + React + Tailwind v4)
 
-The frontend runs on **port 3000**:
+Open a new terminal window to start the client on **port 3000**:
 
-- **From repository root**:
-  ```bash
-  npm run dev:frontend
-  ```
-- **Or from inside the `frontend/` directory**:
-  ```bash
-  cd frontend
-  npm run dev
-  ```
+```bash
+# Navigate to frontend and start the dev server
+cd frontend
+pnpm dev
+```
 
 - **Frontend Dashboard**: [http://localhost:3000](http://localhost:3000)
 - *(Note: Vite automatically proxies all `/api` requests to the FastAPI backend at `http://localhost:3001`)*.
 
 ---
 
-#### 3. Verify System Health & Run Tests
+### 3. Verify System Health & Run Tests
 
 ```bash
 # Run backend health & database connectivity tests:
-make test
-# or: npm run test:backend
+PYTHONPATH=. ./backend/.venv/bin/python backend/tests/unit/test_health.py
 
 # Verify frontend TypeScript build:
-npm run build:frontend
+pnpm --prefix frontend run build
 ```
 
 ---

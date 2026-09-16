@@ -21,13 +21,18 @@ The backend runs on **port 3001** with hot reloading enabled:
 # Navigate to backend directory
 cd backend
 
-# Option A (Recommended): Standard Python runner
-source .venv/bin/activate        # On Windows: . venv\Scripts\activate
-python app.py
+# 1. Create virtual environment
+python -m venv venv
 
-# Option B: Direct uvicorn
-source .venv/bin/activate
-uvicorn backend.app.main:app --host 0.0.0.0 --port 3001 --reload
+# 2. Activate virtual environment
+source venv/bin/activate        # On Ubuntu / Linux / macOS
+# . venv/Scripts/activate       # On Windows
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Run application
+python app.py
 ```
 
 - **API Base URL**: `http://localhost:3001`
@@ -41,8 +46,13 @@ uvicorn backend.app.main:app --host 0.0.0.0 --port 3001 --reload
 Open a new terminal window to start the client on **port 3000**:
 
 ```bash
-# Navigate to frontend and start the dev server
+# Navigate to frontend directory
 cd frontend
+
+# 1. Install dependencies
+pnpm install
+
+# 2. Start dev server
 pnpm dev
 ```
 
@@ -54,11 +64,13 @@ pnpm dev
 ### 3. Verify System Health & Run Tests
 
 ```bash
-# Run backend health & database connectivity tests:
-PYTHONPATH=. ./backend/.venv/bin/python backend/tests/unit/test_health.py
+# Run backend health & database connectivity tests (from backend/):
+cd backend
+python tests/unit/test_health.py
 
-# Verify frontend TypeScript build:
-pnpm --prefix frontend run build
+# Verify frontend TypeScript build (from frontend/):
+cd frontend
+pnpm run build
 ```
 
 ---

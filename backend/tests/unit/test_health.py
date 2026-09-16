@@ -1,4 +1,13 @@
 import asyncio
+import sys
+from pathlib import Path
+
+# Ensure repository root is on sys.path
+TEST_DIR = Path(__file__).resolve().parent
+REPO_ROOT = TEST_DIR.parents[2]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
 from httpx import AsyncClient, ASGITransport
 from backend.app.main import app
 

@@ -11,6 +11,14 @@ class StrEnum(str, Enum):
 API_V1_PREFIX = "/api/v1"
 PROJECT_NAME = "Employee Support Assistant"
 
+
+class Environment(StrEnum):
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
+    TESTING = "testing"
+
+
 # Pagination Defaults
 DEFAULT_PAGE = 1
 DEFAULT_PAGE_SIZE = 20

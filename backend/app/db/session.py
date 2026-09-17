@@ -8,7 +8,7 @@ from backend.app.core.logging import logger
 # Create async engine with connection pooling
 engine = create_async_engine(
     settings.ASYNC_DATABASE_URL,
-    echo=settings.DEBUG,
+    echo=settings.is_development,
     pool_pre_ping=True,
     pool_size=10,
     max_overflow=20,

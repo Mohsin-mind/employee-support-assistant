@@ -2,6 +2,7 @@ from typing import List, Union
 from urllib.parse import quote_plus
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from backend.app.core.constants import Environment
 
 
 class Settings(BaseSettings):
@@ -13,18 +14,14 @@ class Settings(BaseSettings):
     )
 
     APP_NAME: str = "Employee Support Assistant"
-    ENVIRONMENT: str = "development"
+    ENVIRONMENT: str = Environment.DEVELOPMENT.value
     HOST: str = "0.0.0.0"
     PORT: int = 3001
     API_V1_STR: str = "/api/v1"
 
     @property
     def is_development(self) -> bool:
-        return self.ENVIRONMENT.lower() == "development"
-
-    @property
-    def DEBUG(self) -> bool:
-        return self.is_development
+        return self.ENVIRONMENT.lower() == Environment.DEVELOPMENT.value
 
     # Database
     DB_DIALECT: str = "postgresql+asyncpg"

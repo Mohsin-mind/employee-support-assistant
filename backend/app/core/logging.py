@@ -4,7 +4,7 @@ from backend.app.core.config import settings
 
 
 def setup_logging():
-    log_level = logging.DEBUG if settings.DEBUG else logging.INFO
+    log_level = logging.DEBUG if settings.is_development else logging.INFO
 
     # Configure root logger
     logging.basicConfig(
@@ -17,7 +17,7 @@ def setup_logging():
 
     # Silence overly verbose loggers
     logging.getLogger("uvicorn.access").setLevel(logging.INFO)
-    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING if not settings.DEBUG else logging.INFO)
+    logging.getLogger("sqlalchemy.engine").setLevel(logging.WARNING if not settings.is_development else logging.INFO)
 
     logger = logging.getLogger(settings.APP_NAME)
     logger.info("Logging configured successfully. Level: %s", logging.getLevelName(log_level))

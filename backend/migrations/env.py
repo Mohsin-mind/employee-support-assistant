@@ -18,6 +18,7 @@ if config.config_file_name is not None:
 
 from backend.app.core.config import settings
 from backend.app.db.base import Base
+import backend.app.db.models  # Ensure all models are registered in Base.metadata
 
 # add your model's MetaData object here
 # for 'autogenerate' support

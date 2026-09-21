@@ -8,10 +8,10 @@ from inside the backend/ directory or from the repository root.
 import sys
 from pathlib import Path
 
-# Automatically ensure current directory and repository root are on sys.path
 BACKEND_DIR = Path(__file__).resolve().parent
 REPO_ROOT = BACKEND_DIR.parent
 
+# Automatically ensure current directory and repository root are on sys.path
 for path in (str(BACKEND_DIR), str(REPO_ROOT)):
     if path not in sys.path:
         sys.path.insert(0, path)

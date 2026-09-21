@@ -39,7 +39,7 @@ Frontend Chat Interface
 
 ## Subsystem Documentation
 
-- **[Backend Architecture](file:///home/mind/workspace/Other/demo/Employee%20Support%20Assistant/backend/docs/ARCHITECTURE.md)**: Layered layout, database tables, ORM models, and AI engine folder structure.
-- **[Frontend Architecture](file:///home/mind/workspace/Other/demo/Employee%20Support%20Assistant/frontend/docs/ARCHITECTURE.md)**: State management strategy, domain component structure, Zod-Pydantic symmetry, and design system.
-- **[Development Phases](file:///home/mind/workspace/Other/demo/Employee%20Support%20Assistant/DEVELOPMENT_PHASES.md)**: Progressive 9-phase implementation roadmap.
-- **[AI System Rules](file:///home/mind/workspace/Other/demo/Employee%20Support%20Assistant/.agents/rules/architecture.md)**: Persistent agent instructions preventing drift during automated coding.
+- **[Backend Architecture](/backend/docs/ARCHITECTURE.md)**: Layered layout, database tables, ORM models, and AI engine folder structure.
+- **[Frontend Architecture](/frontend/docs/ARCHITECTURE.md)**: State management strategy, domain component structure, Zod-Pydantic symmetry, and design system.
+- **[Development Phases](/DEVELOPMENT_PHASES.md)**: Progressive 9-phase implementation roadmap.
+- **[AI System Rules](/.agents/rules/architecture.md)**: Persistent agent instructions preventing drift during automated coding.

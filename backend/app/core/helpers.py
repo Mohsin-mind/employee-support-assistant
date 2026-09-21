@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, date, timedelta
 from typing import List, TypeVar, Optional, Any
 import uuid
 
@@ -28,10 +28,11 @@ def calculate_business_days(start_date: date, end_date: date) -> int:
         return 0
     days = 0
     curr = start_date
+    one_day = timedelta(days=1)
     while curr <= end_date:
         if curr.weekday() < 5:  # Monday = 0, Friday = 4
             days += 1
-        curr += datetime.resolution.days if hasattr(curr, 'days') else date.fromordinal(curr.toordinal() + 1)
+        curr += one_day
     return days
 
 

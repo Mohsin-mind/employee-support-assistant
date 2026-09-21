@@ -22,11 +22,11 @@ The backend runs on **port 3001** with hot reloading enabled:
 cd backend
 
 # 1. Create virtual environment
-python -m venv venv
+python3 -m venv .venv
 
 # 2. Activate virtual environment
-source venv/bin/activate        # On Ubuntu / Linux / macOS
-# . venv/Scripts/activate       # On Windows
+source .venv/bin/activate        # On macOS / Linux
+# . .venv/Scripts/activate       # On Windows
 
 # 3. Install dependencies
 pip install -r requirements.txt

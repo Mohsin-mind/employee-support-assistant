@@ -26,7 +26,7 @@ export const HomePage: React.FC = () => {
       num: "01",
       title: "Project Setup & Foundations",
       desc: "FastAPI + React/Vite scaffolding, PostgreSQL connection, health monitoring & Alembic.",
-      status: "active",
+      status: "completed",
       tech: "FastAPI • SQLAlchemy • Vite • Tailwind v4",
       icon: <Layers size={18} className="text-indigo-400" />,
     },
@@ -34,7 +34,7 @@ export const HomePage: React.FC = () => {
       num: "02",
       title: "Database & Core Domain APIs",
       desc: "Employee, Leave Balances/Requests, Documents, and Conversation schema CRUD.",
-      status: "pending",
+      status: "completed",
       tech: "Router → Service → Repository Pattern",
       icon: <Database size={18} className="text-cyan-400" />,
     },
@@ -188,11 +188,11 @@ export const HomePage: React.FC = () => {
             <span>Current Stage</span>
             <Clock size={18} className="text-amber-400" />
           </div>
-          <div className="text-2xl font-bold tracking-tight text-indigo-400 mb-3">
-            Phase 1
+          <div className="text-2xl font-bold tracking-tight text-emerald-400 mb-3">
+            Phase 2
           </div>
           <div className="flex items-center gap-1.5 text-xs text-slate-400 pt-3 border-t border-white/5">
-            <span>Project Setup & Connection Validation</span>
+            <span>Database & Core Domain APIs Ready</span>
           </div>
         </div>
       </section>
@@ -209,16 +209,27 @@ export const HomePage: React.FC = () => {
             <div 
               key={p.num} 
               className={`glass-panel rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between ${
-                p.status === 'active' ? 'border-indigo-500/50 shadow-lg shadow-indigo-500/10' : ''
+                p.status === 'completed'
+                  ? 'border-emerald-500/30 shadow-lg shadow-emerald-500/5'
+                  : p.status === 'active'
+                  ? 'border-indigo-500/50 shadow-lg shadow-indigo-500/10'
+                  : ''
               }`}
             >
+              {p.status === 'completed' && (
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-cyan-400" />
+              )}
               {p.status === 'active' && (
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-cyan-400" />
               )}
               <div>
                 <div className="flex justify-between items-start mb-3">
                   <span className={`text-[11px] font-mono font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-md ${
-                    p.status === 'active' ? 'bg-indigo-500/20 text-indigo-300' : 'bg-white/5 text-slate-400'
+                    p.status === 'completed'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      : p.status === 'active'
+                      ? 'bg-indigo-500/20 text-indigo-300'
+                      : 'bg-white/5 text-slate-400'
                   }`}>
                     Phase {p.num}
                   </span>

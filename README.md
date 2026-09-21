@@ -21,19 +21,15 @@ The backend runs on **port 3001** with hot reloading enabled:
 # Navigate to backend directory
 cd backend
 
-# 1. Create virtual environment
-python3 -m venv .venv
+# 1. Install dependencies (lightning-fast with uv)
+uv pip install -r requirements.txt
 
-# 2. Activate virtual environment
-source .venv/bin/activate        # On macOS / Linux
-# . .venv/Scripts/activate       # On Windows
-
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Run application
-python app.py
+# 2. Run application (single command, automatically uses .venv)
+uv run app.py
 ```
+
+> **Note**: If you prefer the classic workflow without `uv`:
+> `source .venv/bin/activate && python app.py`
 
 - **API Base URL**: `http://localhost:3001`
 - **Health Check Endpoint**: [http://localhost:3001/api/v1/health](http://localhost:3001/api/v1/health)
@@ -64,9 +60,10 @@ pnpm dev
 ### 3. Verify System Health & Run Tests
 
 ```bash
-# Run backend health & database connectivity tests (from backend/):
+# Run backend health & API test suites (from backend/):
 cd backend
-python tests/unit/test_health.py
+uv run python tests/unit/test_health.py
+uv run python tests/unit/test_phase2_apis.py
 
 # Verify frontend TypeScript build (from frontend/):
 cd frontend

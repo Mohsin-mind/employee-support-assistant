@@ -1,5 +1,14 @@
 import asyncio
+import sys
+from pathlib import Path
 from logging.config import fileConfig
+
+# Ensure project root is on sys.path
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+REPO_ROOT = BACKEND_DIR.parent
+for p in (str(REPO_ROOT), str(BACKEND_DIR)):
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection

@@ -1,5 +1,5 @@
-from typing import Optional
-from fastapi import APIRouter, Depends, Query, status
+from typing import Optional, List
+from fastapi import APIRouter, Depends, Query, status, UploadFile, File, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.api.dependencies import get_db
 from backend.app.schemas.common import (
@@ -13,6 +13,7 @@ from backend.app.schemas.document import (
     DocumentCreate,
     DocumentResponse,
     DocumentDetailResponse,
+    DocumentChunkResponse,
 )
 from backend.app.services.document_service import DocumentService
 from backend.app.core.constants import (
@@ -87,3 +88,45 @@ async def delete_document(
     await service.delete_document(db, document_id)
     await db.commit()
     return success_response(data=None, message=Messages.DELETED)
+
+
+@router.post(
+    "/upload",
+    response_model=APIResponse[DocumentResponse],
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def upload_document(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(..., description="PDF document file to upload and index"),
+    db: AsyncSession = Depends(get_db),
+) -> APIResponse[DocumentResponse]:
+    """
+    Upload a PDF policy document. Text extraction, chunking, and FastEmbed
+    vector indexing run asynchronously via BackgroundTasks.
+    """
+    doc = await service.upload_and_enqueue_document(
+        session=db,
+        file=file,
+        background_tasks=background_tasks,
+    )
+    await db.commit()
+    data = DocumentResponse.model_validate(doc)
+    return success_response(
+        data=data,
+        message="Document uploaded and queued for background indexing.",
+    )
+
+
+@router.get(
+    "/{document_id}/chunks",
+    response_model=APIResponse[List[DocumentChunkResponse]],
+)
+async def get_document_chunks(
+    document_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> APIResponse[List[DocumentChunkResponse]]:
+    """Retrieve all text chunks and page mappings for an ingested document."""
+    chunks = await service.get_chunks(db, document_id)
+    data = [DocumentChunkResponse.model_validate(c) for c in chunks]
+    return success_response(data=data)
+

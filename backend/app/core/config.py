@@ -1,17 +1,21 @@
-from typing import List, Union
+from pathlib import Path
+from typing import List, Union, Optional
 from urllib.parse import quote_plus
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from backend.app.core.constants import Environment
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=(str(BASE_DIR / ".env"), ".env"),
         env_file_encoding="utf-8",
         extra="ignore",
         case_sensitive=True
     )
+
 
     APP_NAME: str = "Employee Support Assistant"
     ENVIRONMENT: str = Environment.DEVELOPMENT.value
@@ -22,6 +26,21 @@ class Settings(BaseSettings):
     @property
     def is_development(self) -> bool:
         return self.ENVIRONMENT.lower() == Environment.DEVELOPMENT.value
+
+    # AI & Groq Configuration
+    GROQ_API_KEY: Optional[str] = None
+    GROQ_MODEL: str = "openai/gpt-oss-120b"
+    GROQ_API_URL: str = "https://api.groq.com/openai/v1/chat/completions"
+
+
+    # Embedding & RAG Configuration
+    EMBEDDING_PROVIDER: str = "local"
+    EMBEDDING_MODEL: str = "BAAI/bge-small-en-v1.5"
+    EMBEDDING_DIMENSION: int = 384
+    CHUNK_SIZE: int = 500
+    CHUNK_OVERLAP: int = 100
+    RAG_TOP_K: int = 4
+    UPLOAD_DIR: str = "uploads"
 
     # Database
     DB_DIALECT: str = "postgresql+asyncpg"

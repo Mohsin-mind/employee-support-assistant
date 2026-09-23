@@ -27,7 +27,7 @@ class DocumentChunk(Base, TimestampMixin):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
     page_number: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-    embedding = mapped_column(Vector(1536), nullable=True)
+    embedding = mapped_column(Vector(384), nullable=True)
     meta_data: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
 
     # Relationships

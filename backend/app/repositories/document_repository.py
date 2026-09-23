@@ -76,3 +76,36 @@ class DocumentRepository:
         ).order_by(DocumentChunk.chunk_index.asc())
         result = await session.execute(stmt)
         return list(result.scalars().all())
+
+    async def search_similar_chunks(
+        self,
+        session: AsyncSession,
+        query_embedding: List[float],
+        top_k: int = 4,
+        document_id: Optional[str] = None,
+    ) -> List[Tuple[DocumentChunk, float, str]]:
+        """
+        Perform vector cosine distance search using pgvector (<=>).
+        Returns a list of (DocumentChunk, similarity_score, filename) tuples.
+        """
+        distance_col = DocumentChunk.embedding.cosine_distance(query_embedding).label("distance")
+        stmt = (
+            select(DocumentChunk, Document.filename, distance_col)
+            .join(Document, DocumentChunk.document_id == Document.id)
+            .where(DocumentChunk.embedding.is_not(None))
+        )
+        if document_id:
+            stmt = stmt.where(DocumentChunk.document_id == document_id)
+
+        stmt = stmt.order_by(distance_col.asc()).limit(top_k)
+        result = await session.execute(stmt)
+        rows = result.all()
+
+        results: List[Tuple[DocumentChunk, float, str]] = []
+        for chunk, filename, dist in rows:
+            # Cosine similarity = 1 - cosine distance, bounded [0.0, 1.0]
+            similarity = round(max(0.0, 1.0 - float(dist)), 4)
+            results.append((chunk, similarity, filename))
+
+        return results
+

@@ -1,12 +1,17 @@
 from typing import List, Tuple, Optional
+from pathlib import Path
+from fastapi import UploadFile, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.db.models.document import Document
 from backend.app.db.models.document_chunk import DocumentChunk
 from backend.app.schemas.document import DocumentCreate, DocumentChunkCreate
 from backend.app.repositories.document_repository import DocumentRepository
-from backend.app.exceptions.exceptions import raise_not_found
+from backend.app.exceptions.exceptions import raise_not_found, raise_bad_request
 from backend.app.core.constants import DocumentStatus
+from backend.app.core.config import settings
+from backend.app.core.helpers import generate_uuid
 from backend.app.core.logging import logger
+from backend.app.ai.rag.ingestion import process_document_ingestion
 
 
 class DocumentService:
@@ -103,3 +108,51 @@ class DocumentService:
         """Fetch all chunks belonging to a document."""
         await self.get_document_by_id(session, document_id)
         return await self.document_repo.get_chunks(session, document_id)
+
+    async def upload_and_enqueue_document(
+        self,
+        session: AsyncSession,
+        file: UploadFile,
+        background_tasks: BackgroundTasks,
+    ) -> Document:
+        """
+        Validate, save uploaded PDF file to disk, register Document entity with PENDING status,
+        and schedule background extraction, chunking, and embedding ingestion.
+        """
+        if not file.filename or not file.filename.lower().endswith(".pdf"):
+            raise_bad_request("Only PDF files (.pdf) are supported.")
+
+        content = await file.read()
+        file_size = len(content)
+        if file_size == 0:
+            raise_bad_request("Uploaded file is empty.")
+
+        upload_dir = Path(settings.UPLOAD_DIR)
+        upload_dir.mkdir(parents=True, exist_ok=True)
+
+        doc_id = generate_uuid()
+        clean_filename = Path(file.filename).name
+        target_path = upload_dir / f"{doc_id}_{clean_filename}"
+
+        target_path.write_bytes(content)
+
+        doc = Document(
+            id=doc_id,
+            filename=clean_filename,
+            file_path=str(target_path.resolve()),
+            file_size_bytes=file_size,
+            status=DocumentStatus.PENDING,
+            meta_data={"content_type": file.content_type},
+        )
+        created = await self.document_repo.create(session, doc)
+        logger.info(f"Saved uploaded PDF '{clean_filename}' ({file_size} bytes) with document_id='{doc_id}'")
+
+        # Offload text extraction, chunking, and FastEmbed vectorization to background task
+        background_tasks.add_task(
+            process_document_ingestion,
+            document_id=doc_id,
+            file_path_str=str(target_path.resolve()),
+        )
+
+        return created
+
